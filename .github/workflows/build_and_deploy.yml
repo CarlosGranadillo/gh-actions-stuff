@@ -23,6 +23,7 @@ jobs:
         with:
           name: prepare_release_done
           path: ./prepare_release_artifact
+        continue-on-error: true
 
       - name: Check if prepare_release is done
         id: check-prepare-release
@@ -30,11 +31,13 @@ jobs:
           if [ ! -f ./prepare_release_artifact/prepare_release_done.txt ]; then
             echo "prepare_release not done, skipping build_and_deploy."
             exit 0
+          else
+            echo "prepare_release_done=true" >> $GITHUB_ENV
           fi
         shell: bash
 
       - name: Build and deploy
-        if: steps.check-prepare-release.outputs.exists == 'true'
+        if: env.prepare_release_done == 'true'
         run: |
           echo "Building and deploying..."
           # Add your build and deploy logic here
