@@ -1,0 +1,35 @@
+name: Prepare Release
+
+on:
+    workflow_dispatch:
+    create:
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'create' && github.event.ref_type == 'branch' && startsWith(github.event.ref, 'release/'))
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Prepare release
+        run: |
+          echo "Preparing release..."
+          # Add your version update logic here
+
+      - name: Create artifact to signal completion
+        run: echo "prepare_release_done" > prepare_release_done.txt
+        shell: bash
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: prepare_release_done
+          path: prepare_release_done.txt
+
+      - name: Trigger build_and_deploy
+        run: |
+          echo "Triggering build_and_deploy workflow..."
+          gh workflow run build_and_deploy.yml -f branch=${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

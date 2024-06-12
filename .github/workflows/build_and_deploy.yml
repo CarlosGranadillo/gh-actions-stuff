@@ -1,0 +1,39 @@
+name: Build and Deploy
+
+on:
+  workflow_run:
+    workflows: ["Prepare Release"]
+    types:
+      - completed
+  push:
+    branches:
+      - release/**
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download prepare_release artifact
+        id: download-artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: prepare_release_done
+          path: ./prepare_release_artifact
+
+      - name: Check if prepare_release is done
+        id: check-prepare-release
+        run: |
+          if [ ! -f ./prepare_release_artifact/prepare_release_done.txt ]; then
+            echo "prepare_release not done, skipping build_and_deploy."
+            exit 0
+          fi
+        shell: bash
+
+      - name: Build and deploy
+        if: steps.check-prepare-release.outputs.exists == 'true'
+        run: |
+          echo "Building and deploying..."
+          # Add your build and deploy logic here
