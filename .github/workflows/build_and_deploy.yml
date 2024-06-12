@@ -17,6 +17,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Check if the push is the initial branch creation
+        id: check-initial-push
+        run: |
+          if [ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]; then
+            echo "Initial branch creation detected, skipping build_and_deploy."
+            exit 0
+          fi
+        shell: bash
+
       - name: Download prepare_release artifact
         id: download-artifact
         uses: actions/download-artifact@v3
