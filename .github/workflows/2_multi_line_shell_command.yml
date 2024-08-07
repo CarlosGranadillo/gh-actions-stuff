@@ -1,0 +1,13 @@
+name: My Second GHA Workflow
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  my-first-job:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Print Hello
+          run: |
+            echo "Hello world!!!"
+            echo "This is a multi-line shell command"
