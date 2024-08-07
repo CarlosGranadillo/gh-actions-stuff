@@ -3,6 +3,7 @@ name: My First GHA Workflow
 
 # Workflow triggers
 on: 
+  # Manually trigger the workflow
   workflow_dispatch:
 
 # Workflow jobs
